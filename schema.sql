@@ -40,3 +40,21 @@ Which servers might need attention:
 SELECT * FROM servers WHERE status != "online";
 Are there any servers not running Windows?
 SELECT * FROM servers WHERE os != "Windows";
+
+Who are the first 3 users alphabetically that are active? 
+SELECT * FROM users WHERE active = 1 ORDER BY name LIMIT 3;
+What are the last 2 servers added to the database? 
+SELECT * FROM servers ORDER BY id DESC LIMIT 2;
+If you were paginating users 3 at a time, what would page 2 look like? 
+SELECT * FROM users LIMIT 3 OFFSET 3
+
+* Return all users ordered alphabetically by name: 
+SELECT * FROM users ORDER BY name;
+* Return all users ordered by `active` — inactive users first: 
+SELECT * FROM users ORDER BY active ASC;
+* Return the first 3 servers alphabetically by hostname: 
+SELECT * FROM servers ORDER BY hostname LIMIT 3;
+* Return all servers ordered by status — think about what alphabetical ordering does to "maintenance", "offline", "online": 
+SELECT * FROM servers ORDER BY status;
+* Return the most recently added user — think about which column tells you insertion order and which direction to sort:  
+SELECT * FROM users ORDER BY id DESC LIMIT 1;
