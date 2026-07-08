@@ -19,3 +19,8 @@ INSERT INTO servers (hostname, ip_address, os, status) VALUES
     ("computer-06", "10.10.1.105", "Windows", "maintenance"),
     ("computer-07", "10.10.1.106", "Linux", "maintenance");
 SELECT * FROM servers;
+
+UPDATE servers SET assigned_to = 1 WHERE id = 1;
+UPDATE servers SET assigned_to = 1 WHERE id = 2;
+UPDATE servers SET assigned_to = 2 WHERE id = 3;
+UPDATE servers SET assigned_to = 3 WHERE id = 4;

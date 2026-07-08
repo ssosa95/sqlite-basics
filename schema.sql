@@ -58,3 +58,33 @@ SELECT * FROM servers ORDER BY hostname LIMIT 3;
 SELECT * FROM servers ORDER BY status;
 * Return the most recently added user — think about which column tells you insertion order and which direction to sort:  
 SELECT * FROM users ORDER BY id DESC LIMIT 1;
+
+
+ALTER TABLE servers ADD COLUMN assigned_to INTEGER;
+
+A good rule of thumb — if the question says "with their [something]", that implies a match must exist, 
+which points to INNER JOIN. 
+If the question says "and show whether they have [something]", that points to LEFT JOIN.
+
+1. List all servers with their assigned users name and role using INNER JOIN: SELECT s.hostname, u.name, u.role
+FROM servers s
+INNER JOIN users u ON s.assigned_to = u.id;
+2. List all servers using LEFT JOIN — observe which one shows NULL: SELECT s.hostname, u.name, u.role
+FROM servers s
+LEFT JOIN users u ON s.assigned_to = u.id;
+3. Find unassigned servers — use a LEFT JOIN with a WHERE clause that filters for NULL. Hint: `WHERE u.id IS NULL: SELECT s.hostname, u.name, u.role`
+`FROM servers s`
+`LEFT JOIN users u ON s.assigned_to = u.id WHERE u.id IS NULL;`
+4. List only online servers with their assigned user:  SELECT s.hostname, u.name, u.role, s.status
+FROM servers s
+LEFT JOIN users u ON s.assigned_to = u.id WHERE s.status = "online";
+
+* Which user is responsible for the most servers? SELECT s.hostname, u.name, u.role, u.active
+FROM servers s
+INNER JOIN users u ON s.assigned_to = u.id
+ORDER BY name;
+# Need GROUP BY and COUNT to find the user with the most servers assigned. Day 19***
+* Are there any servers with no assigned admin? `SELECT s.hostname, u.name, u.role` `FROM servers s` `LEFT JOIN users u ON s.assigned_to = u.id WHERE u.id IS NULL;`
+* Which active users have servers assigned to them? SELECT s.hostname, u.name, u.role, u.active
+FROM servers s
+INNER JOIN users u ON s.assigned_to = u.id WHERE u.active = 1;
