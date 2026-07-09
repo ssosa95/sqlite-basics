@@ -65,6 +65,7 @@ ALTER TABLE servers ADD COLUMN assigned_to INTEGER;
 A good rule of thumb — if the question says "with their [something]", that implies a match must exist, 
 which points to INNER JOIN. 
 If the question says "and show whether they have [something]", that points to LEFT JOIN.
+INNER JOIN implies there is a match in both tables, while LEFT JOIN implies there may not be a match in the right table.
 
 1. List all servers with their assigned users name and role using INNER JOIN: SELECT s.hostname, u.name, u.role
 FROM servers s
@@ -72,9 +73,10 @@ INNER JOIN users u ON s.assigned_to = u.id;
 2. List all servers using LEFT JOIN — observe which one shows NULL: SELECT s.hostname, u.name, u.role
 FROM servers s
 LEFT JOIN users u ON s.assigned_to = u.id;
-3. Find unassigned servers — use a LEFT JOIN with a WHERE clause that filters for NULL. Hint: `WHERE u.id IS NULL: SELECT s.hostname, u.name, u.role`
-`FROM servers s`
-`LEFT JOIN users u ON s.assigned_to = u.id WHERE u.id IS NULL;`
+3. Find unassigned servers — use a LEFT JOIN with a WHERE clause that filters for NULL. Hint: WHERE u.id IS NULL: 
+SELECT s.hostname, u.name, u.role
+FROM servers s
+LEFT JOIN users u ON s.assigned_to = u.id WHERE u.id IS NULL;
 4. List only online servers with their assigned user:  SELECT s.hostname, u.name, u.role, s.status
 FROM servers s
 LEFT JOIN users u ON s.assigned_to = u.id WHERE s.status = "online";
@@ -84,7 +86,31 @@ FROM servers s
 INNER JOIN users u ON s.assigned_to = u.id
 ORDER BY name;
 # Need GROUP BY and COUNT to find the user with the most servers assigned. Day 19***
-* Are there any servers with no assigned admin? `SELECT s.hostname, u.name, u.role` `FROM servers s` `LEFT JOIN users u ON s.assigned_to = u.id WHERE u.id IS NULL;`
-* Which active users have servers assigned to them? SELECT s.hostname, u.name, u.role, u.active
+* Are there any servers with no assigned admin? 
+SELECT s.hostname, u.name, u.role FROM servers s 
+LEFT JOIN users u ON s.assigned_to = u.id WHERE u.id IS NULL;
+* Which active users have servers assigned to them? 
+SELECT s.hostname, u.name, u.role, u.active
 FROM servers s
 INNER JOIN users u ON s.assigned_to = u.id WHERE u.active = 1;
+
+
+* Count how many users are active vs inactive — you should get two rows back: SELECT active, COUNT(*) AS total
+FROM users
+GROUP BY active;
+* Count how many servers are in each status group: SELECT status, COUNT(*) AS total
+FROM servers
+GROUP BY status;
+* Count how many servers each OS has: SELECT os, COUNT(*) AS total
+FROM servers
+GROUP BY os;
+* List each user with a count of how many servers they are assigned to — include users with zero servers. Hint: which JOIN type keeps all users regardless of whether they have servers? SELECT u.name, COUNT(s.id) AS server_count
+FROM users u
+LEFT JOIN servers s ON s.assigned_to = u.id
+GROUP BY u.id
+ORDER BY server_count DESC;
+* Find any roles that have more than one user — use HAVING: SELECT role, COUNT(*) AS total
+FROM users
+GROUP BY role
+HAVING total > 1;
+
