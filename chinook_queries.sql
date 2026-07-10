@@ -1,3 +1,5 @@
+-- Day 20: Practice queries against the Chinook database
+
 List all tracks with their album name — you will need to JOIN Track and Album:
 SELECT t.name, a.Title
 FROM Album a
